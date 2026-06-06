@@ -1,0 +1,60 @@
+name: Static CI/CD
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify_static_site:
+    name: Verify Static Site
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify index.html exists
+        run: test -f index.html
+
+      - name: Verify assets directory exists
+        run: test -d assets
+
+      - name: List static build contents
+        run: |
+          find . -maxdepth 2 -not -path '*/.*' | sort
+
+      - name: Upload static artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: amalgam-static-site
+          path: |
+            index.html
+            assets/
+            images/
+            static/
+            *.html
+          retention-days: 5
+
+  deploy_vercel:
+    name: Deploy to Vercel
+    needs: verify_static_site
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
