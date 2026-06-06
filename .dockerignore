@@ -1,0 +1,15 @@
+.git
+.github
+docs
+.env
+.env.local
+.vscode
+.idea
+*.swp
+*.swo
+README.md
+LICENSE
+amalgam_data_dictionary.csv
+amalgam_database_csv_package.zip
+amalgam_database_seed_combined.csv
+amalgam_schema_postgres.sql
