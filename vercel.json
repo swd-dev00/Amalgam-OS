@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "public": true,
+  "name": "amalgam-os-static",
+  "regions": ["iad1"],
+  "cleanUrls": true,
+  "trailingSlash": false
+}
